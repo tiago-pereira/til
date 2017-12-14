@@ -1,0 +1,35 @@
+var request = window.indexedDB.open('parmais', 1);
+
+request.onupgradeneeded = function(event) {
+  var db = event.target.result;
+  db.createObjectStore('parmais')
+}
+
+request.onsuccess = function(event) {
+  window.db = request.result;
+  getToken().then(t => console.log(t))
+}
+
+const getToken = () => {
+  return new Promise((resolve, reject) => {
+    var db = window.db
+    var transaction = db.transaction('zzz', 'readwrite');
+    var objectStore = transaction.objectStore('zzz');
+    var objectStoreRequest = objectStore.get('token');
+    objectStoreRequest.onsuccess = function(event) {
+      resolve(objectStoreRequest.result)
+    }
+
+  })
+}
+
+const setToken = (token) => {
+  return new Promise((resolve, reject) => {
+    var transaction = window.db.transaction('zzz', "readwrite");
+    var objectStore = transaction.objectStore('zzz');
+    var objectStoreRequest = objectStore.put(token, 'token');
+    objectStoreRequest.onsuccess = function(event) {
+      resolve(event.result)
+    }
+  })
+}
